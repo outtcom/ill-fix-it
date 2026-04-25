@@ -45,3 +45,50 @@
     color: #ffffff;
   }
 }
+
+@layer components {
+  /* Mobile: stack quote form name/phone row */
+  @media (max-width: 480px) {
+    .quote-form-row {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* Mobile: service modal padding */
+  @media (max-width: 480px) {
+    .service-modal-img {
+      height: 160px !important;
+    }
+  }
+
+  /* Mobile: hero CTA buttons full width */
+  @media (max-width: 480px) {
+    #spatial a[href^="tel:"],
+    #spatial button {
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  /* Mobile: capabilities bullet padding */
+  @media (max-width: 480px) {
+    #capabilities li {
+      padding: 20px 16px !important;
+      min-height: auto !important;
+    }
+  }
+
+  /* Mobile: works modal padding */
+  @media (max-width: 480px) {
+    #works > div:last-child > div:last-child > div:last-child {
+      padding: 20px !important;
+    }
+  }
+
+  /* Floating phone button hidden on desktop */
+  @media (min-width: 769px) {
+    .floating-phone {
+      display: none !important;
+    }
+  }
+}

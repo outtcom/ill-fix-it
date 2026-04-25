@@ -224,9 +224,10 @@ export default function Works({ scrollRef: _scrollRef }: WorksProps) {
             <img
               src={selectedService.img}
               alt={selectedService.title}
+              className="service-modal-img"
               style={{
                 width: '100%',
-                height: '280px',
+                height: 'clamp(160px, 30vw, 280px)',
                 objectFit: 'cover',
                 display: 'block',
               }}

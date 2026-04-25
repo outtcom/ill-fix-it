@@ -519,6 +519,7 @@ export default function Hero() {
 function Row({ children }: { children: React.ReactNode }) {
   return (
     <div
+      className="quote-form-row"
       style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
