@@ -1,153 +1,219 @@
+import { useAuth } from '@/hooks/useAuth'
+
 export default function Footer() {
+  const { isAuthenticated } = useAuth()
+
   return (
     <footer
       id="footer"
       style={{
-        backgroundColor: '#ffffff',
-        borderTop: '1px solid #000000',
-        padding: '80px clamp(20px, 4vw, 60px) 0',
-        minHeight: '600px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        overflow: 'hidden',
+        backgroundColor: '#0a1628',
+        padding: 'clamp(80px, 12vh, 160px) clamp(20px, 5vw, 80px) 40px',
       }}
     >
-      {/* Top: Office Info */}
-      <div
-        style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          width: '100%',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '40px',
-          paddingBottom: '80px',
-        }}
-      >
-        <OfficeColumn
-          city="Amalfi Coast"
-          cityEn="ITALY"
-          address="Via Lunamare 12, Positano, 84017 SA"
-          coords="40.6280\u00b0 N, 14.4847\u00b0 E"
-          timezone="UTC+1"
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        {/* Top: columns */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: 'clamp(32px, 4vw, 60px)',
+            paddingBottom: '60px',
+          }}
+        >
+          {/* Contact */}
+          <div>
+            <p
+              style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.18em',
+                color: '#e8622c',
+                marginBottom: '20px',
+                textTransform: 'uppercase',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+              }}
+            >
+              CONTACT
+            </p>
+            <a
+              href="tel:4163886352"
+              style={{
+                fontSize: 'clamp(16px, 2vw, 22px)',
+                fontWeight: 700,
+                letterSpacing: '0.02em',
+                color: '#ffffff',
+                textDecoration: 'none',
+                display: 'block',
+                marginBottom: '10px',
+                fontFamily: '"SF Mono", Monaco, Inconsolata, monospace',
+                transition: 'color 0.3s ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#e8622c' }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = '#ffffff' }}
+            >
+              (416) 388-6352
+            </a>
+            <a
+              href="mailto:kevinwillfixit7@gmail.com"
+              style={{
+                fontSize: '15px',
+                color: 'rgba(255,255,255,0.6)',
+                textDecoration: 'none',
+                display: 'block',
+                marginBottom: '10px',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                transition: 'color 0.3s ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#ffffff' }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.6)' }}
+            >
+              kevinwillfixit7@gmail.com
+            </a>
+            <p
+              style={{
+                fontSize: '14px',
+                color: '#2cc9e8',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+              }}
+            >
+              Available 24/7 across GTA
+            </p>
+          </div>
+
+          {/* Service Areas */}
+          <div>
+            <p
+              style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.18em',
+                color: '#e8622c',
+                marginBottom: '20px',
+                textTransform: 'uppercase',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+              }}
+            >
+              SERVICE AREAS
+            </p>
+            {['Toronto', 'Scarborough', 'Etobicoke', 'North York', 'Mississauga', 'Brampton', 'Markham', 'Richmond Hill'].map((area) => (
+              <p
+                key={area}
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255,255,255,0.55)',
+                  lineHeight: 2,
+                  fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                }}
+              >
+                {area}
+              </p>
+            ))}
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <p
+              style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.18em',
+                color: '#e8622c',
+                marginBottom: '20px',
+                textTransform: 'uppercase',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+              }}
+            >
+              QUICK LINKS
+            </p>
+            {[
+              { label: 'Services', target: '#works' },
+              { label: 'Get a Quote', target: '#hero' },
+              { label: 'About', target: '#about' },
+              ...(isAuthenticated ? [] : [{ label: 'Login', target: '/login' }]),
+            ].map((link) => (
+              <p key={link.label} style={{ lineHeight: 2 }}>
+                {link.target.startsWith('#') ? (
+                  <button
+                    onClick={() => document.querySelector(link.target)?.scrollIntoView({ behavior: 'smooth' })}
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255,255,255,0.55)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                      transition: 'color 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = '#ffffff' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.55)' }}
+                  >
+                    {link.label}
+                  </button>
+                ) : (
+                  <a
+                    href={link.target}
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255,255,255,0.55)',
+                      textDecoration: 'none',
+                      fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                      transition: 'color 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = '#ffffff' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.55)' }}
+                  >
+                    {link.label}
+                  </a>
+                )}
+              </p>
+            ))}
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div
+          style={{
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+            margin: '0 0 30px',
+          }}
         />
-        <OfficeColumn
-          city="Malibu"
-          cityEn="CALIFORNIA"
-          address="27400 Pacific Coast Highway, Malibu, CA 90265"
-          coords="34.0259\u00b0 N, 118.7798\u00b0 W"
-          timezone="UTC-8"
-        />
-        <OfficeColumn
-          city="Phuket"
-          cityEn="THAILAND"
-          address="88 Tri-Trang Beach Road, Patong, Phuket 83150"
-          coords="7.8804\u00b0 N, 98.2953\u00b0 E"
-          timezone="UTC+7"
-        />
-        <div>
-          <p
+
+        {/* Bottom row */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '16px',
+          }}
+        >
+          <span
             style={{
-              fontSize: '12px',
-              fontWeight: 500,
-              letterSpacing: '0.18em',
-              color: '#000000',
-              marginBottom: '20px',
+              fontSize: 'clamp(40px, 8vw, 120px)',
+              fontWeight: 700,
+              letterSpacing: '-0.04em',
+              color: 'rgba(255,255,255,0.08)',
+              fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+              lineHeight: 1,
+              userSelect: 'none',
             }}
           >
-            CONTACT
-          </p>
-          <p style={{ fontSize: '14px', color: '#666666', lineHeight: 2 }}>
-            reservations@lunamare.com
-            <br />
-            +1 (310) 555 0123
-            <br />
-            Instagram: @lunamare.hotels
+            {"I'LL FIX IT"}
+          </span>
+          <p
+            style={{
+              fontSize: '13px',
+              color: 'rgba(255,255,255,0.35)',
+              fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+            }}
+          >
+            &copy; 2025 I&apos;ll Fix It. All rights reserved.
           </p>
         </div>
       </div>
-
-      {/* Bottom: Giant Wordmark */}
-      <div
-        style={{
-          width: '100%',
-          overflow: 'hidden',
-          lineHeight: 0.85,
-          paddingBottom: '0',
-        }}
-      >
-        <span
-          style={{
-            display: 'block',
-            fontSize: 'clamp(80px, 18vw, 320px)',
-            fontWeight: 400,
-            letterSpacing: '-0.04em',
-            color: '#000000',
-            whiteSpace: 'nowrap',
-            transform: 'translateY(15%)',
-            userSelect: 'none',
-          }}
-        >
-          LUNAMARE
-        </span>
-      </div>
     </footer>
-  )
-}
-
-function OfficeColumn({
-  city,
-  cityEn,
-  address,
-  coords,
-  timezone,
-}: {
-  city: string
-  cityEn: string
-  address: string
-  coords: string
-  timezone: string
-}) {
-  return (
-    <div>
-      <p
-        style={{
-          fontSize: '12px',
-          fontWeight: 500,
-          letterSpacing: '0.18em',
-          color: '#000000',
-          marginBottom: '20px',
-        }}
-      >
-        {cityEn}
-      </p>
-      <p style={{ fontSize: '16px', fontWeight: 500, color: '#000000', marginBottom: '8px' }}>
-        {city}
-      </p>
-      <p
-        style={{
-          fontSize: '14px',
-          color: '#666666',
-          lineHeight: 1.6,
-          marginBottom: '12px',
-          maxWidth: '260px',
-        }}
-      >
-        {address}
-      </p>
-      <p
-        style={{
-          fontSize: '11px',
-          letterSpacing: '0.05em',
-          color: '#666666',
-          fontVariantNumeric: 'tabular-nums',
-        }}
-      >
-        {coords}
-        <br />
-        {timezone}
-      </p>
-    </div>
   )
 }

@@ -1,26 +1,26 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { rooms, type Room } from '../data/rooms'
+import { services, type Service } from '../data/services'
 
 gsap.registerPlugin(ScrollTrigger)
 
 interface WorksProps {
   scrollRef: React.MutableRefObject<{ y: number; speed: number }>
-  onSelectRoom: (id: string) => void
 }
 
-export default function Works({ scrollRef: _scrollRef, onSelectRoom }: WorksProps) {
+export default function Works({ scrollRef: _scrollRef }: WorksProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
   const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([])
-  const imageLoadedRef = useRef<boolean[]>(new Array(rooms.length).fill(false))
-  const imagesRef = useRef<(HTMLImageElement | null)[]>(new Array(rooms.length).fill(null))
+  const imageLoadedRef = useRef<boolean[]>(new Array(services.length).fill(false))
+  const imagesRef = useRef<(HTMLImageElement | null)[]>(new Array(services.length).fill(null))
   const strengthRef = useRef(0)
   const prevScrollYRef = useRef(0)
   const randsRef = useRef<number[][]>(
-    rooms.map(() => [Math.random(), Math.random(), Math.random(), Math.random()])
+    services.map(() => [Math.random(), Math.random(), Math.random(), Math.random()])
   )
+  const [selectedService, setSelectedService] = useState<Service | null>(null)
 
   const setCanvasRef = useCallback((el: HTMLCanvasElement | null, index: number) => {
     canvasRefs.current[index] = el
@@ -49,7 +49,7 @@ export default function Works({ scrollRef: _scrollRef, onSelectRoom }: WorksProp
   }, [])
 
   useEffect(() => {
-    rooms.forEach((room, i) => {
+    services.forEach((service, i) => {
       const img = new Image()
       img.crossOrigin = 'anonymous'
       img.onload = () => {
@@ -65,7 +65,7 @@ export default function Works({ scrollRef: _scrollRef, onSelectRoom }: WorksProp
           drawImage(canvas, img, 0, randsRef.current[i])
         }
       }
-      img.src = room.img
+      img.src = service.img
     })
   }, [])
 
@@ -116,78 +116,277 @@ export default function Works({ scrollRef: _scrollRef, onSelectRoom }: WorksProp
   }, [])
 
   return (
-    <section
-      id="works"
-      ref={sectionRef}
-      style={{
-        backgroundColor: '#f4f4f5',
-        padding: '120px clamp(20px, 4vw, 60px)',
-      }}
-    >
-      <div style={{ maxWidth: '1560px', margin: '0 auto' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'baseline',
-            marginBottom: '60px',
-            borderBottom: '1px solid #1a1a1a',
-            paddingBottom: '20px',
-          }}
-        >
-          <h2
+    <>
+      <section
+        id="works"
+        ref={sectionRef}
+        style={{
+          backgroundColor: '#eae7e0',
+          padding: 'clamp(80px, 12vh, 160px) clamp(20px, 5vw, 80px)',
+        }}
+      >
+        <div style={{ maxWidth: '1560px', margin: '0 auto' }}>
+          {/* Section header */}
+          <div
             style={{
-              fontSize: 'clamp(36px, 5vw, 64px)',
-              fontWeight: 400,
-              letterSpacing: '-0.03em',
-              lineHeight: 1,
-              color: '#000000',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'baseline',
+              marginBottom: '60px',
+              borderBottom: '1px solid rgba(10,22,40,0.2)',
+              paddingBottom: '20px',
+              flexWrap: 'wrap',
+              gap: '12px',
             }}
           >
-            Rooms &amp; Residences
-          </h2>
-          <span
-            style={{
-              fontSize: '12px',
-              letterSpacing: '0.18em',
-              color: '#666666',
-              textTransform: 'uppercase',
-            }}
-          >
-            Featured Stays
-          </span>
-        </div>
+            <h2
+              style={{
+                fontSize: 'clamp(36px, 5vw, 72px)',
+                fontWeight: 700,
+                letterSpacing: '-0.02em',
+                lineHeight: 1.1,
+                color: '#0a1628',
+                fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+              }}
+            >
+              Services
+            </h2>
+            <span
+              style={{
+                fontSize: '12px',
+                letterSpacing: '0.18em',
+                color: 'rgba(10,22,40,0.5)',
+                textTransform: 'uppercase',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+              }}
+            >
+              WHAT I DO
+            </span>
+          </div>
 
-        <div
-          ref={gridRef}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 640px), 1fr))',
-            gap: '2px',
-          }}
-        >
-          {rooms.map((room, i) => (
-            <RoomCard
-              key={room.id}
-              room={room}
-              index={i}
-              setCanvasRef={setCanvasRef}
-              onClick={() => onSelectRoom(room.id)}
-            />
-          ))}
+          {/* Service cards grid */}
+          <div
+            ref={gridRef}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 560px), 1fr))',
+              gap: 'clamp(12px, 1.5vw, 24px)',
+            }}
+          >
+            {services.map((service, i) => (
+              <ServiceCard
+                key={service.id}
+                service={service}
+                index={i}
+                setCanvasRef={setCanvasRef}
+                onClick={() => setSelectedService(service)}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Service Detail Modal */}
+      {selectedService && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 200,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+          }}
+          onClick={() => setSelectedService(null)}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundColor: 'rgba(10,22,40,0.85)',
+              backdropFilter: 'blur(8px)',
+            }}
+          />
+          <div
+            style={{
+              position: 'relative',
+              backgroundColor: '#f5f5f0',
+              borderRadius: '4px',
+              maxWidth: '720px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              zIndex: 1,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={selectedService.img}
+              alt={selectedService.title}
+              style={{
+                width: '100%',
+                height: '280px',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+            <div style={{ padding: '32px' }}>
+              <h3
+                style={{
+                  fontSize: 'clamp(24px, 3vw, 36px)',
+                  fontWeight: 700,
+                  color: '#0a1628',
+                  marginBottom: '4px',
+                  fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+                }}
+              >
+                {selectedService.title}
+              </h3>
+              <p
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(10,22,40,0.55)',
+                  marginBottom: '20px',
+                  fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                }}
+              >
+                {selectedService.descriptor}
+              </p>
+              {selectedService.description.map((para, i) => (
+                <p
+                  key={i}
+                  style={{
+                    fontSize: '15px',
+                    lineHeight: 1.65,
+                    color: '#0a1628',
+                    marginBottom: '16px',
+                    fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                  }}
+                >
+                  {para}
+                </p>
+              ))}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '8px',
+                  marginTop: '24px',
+                  marginBottom: '28px',
+                }}
+              >
+                {selectedService.features.map((feature, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '14px',
+                      color: '#0a1628',
+                      fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                    }}
+                  >
+                    <span style={{ color: '#e8622c', fontSize: '16px' }}>&#8226;</span>
+                    {feature}
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => {
+                    setSelectedService(null)
+                    setTimeout(() => {
+                      document.querySelector('#hero')?.scrollIntoView({ behavior: 'smooth' })
+                    }, 100)
+                  }}
+                  style={{
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    letterSpacing: '0.06em',
+                    color: '#ffffff',
+                    backgroundColor: '#e8622c',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '14px 28px',
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                    transition: 'background-color 0.25s ease',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#d45524' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#e8622c' }}
+                >
+                  Get a Quote
+                </button>
+                <a
+                  href="tel:4163886352"
+                  style={{
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    letterSpacing: '0.06em',
+                    color: '#0a1628',
+                    backgroundColor: 'transparent',
+                    border: '1px solid rgba(10,22,40,0.3)',
+                    borderRadius: '4px',
+                    padding: '14px 28px',
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                    textDecoration: 'none',
+                    display: 'inline-block',
+                    transition: 'all 0.25s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#0a1628'
+                    e.currentTarget.style.backgroundColor = 'rgba(10,22,40,0.05)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(10,22,40,0.3)'
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                  }}
+                >
+                  Call Now
+                </a>
+              </div>
+            </div>
+            <button
+              onClick={() => setSelectedService(null)}
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(10,22,40,0.7)',
+                border: 'none',
+                color: '#ffffff',
+                fontSize: '18px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 2,
+              }}
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
-function RoomCard({
-  room,
+function ServiceCard({
+  service,
   index,
   setCanvasRef,
   onClick,
 }: {
-  room: Room
+  service: Service
   index: number
   setCanvasRef: (el: HTMLCanvasElement | null, index: number) => void
   onClick: () => void
@@ -197,13 +396,24 @@ function RoomCard({
       onClick={onClick}
       className="work-item"
       style={{
-        border: '1px solid #000000',
+        border: '1px solid rgba(10,22,40,0.15)',
         backgroundColor: '#ffffff',
         padding: 0,
         cursor: 'pointer',
         textAlign: 'left',
         display: 'block',
         fontFamily: 'inherit',
+        borderRadius: '4px',
+        overflow: 'hidden',
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-4px)'
+        e.currentTarget.style.boxShadow = '0 12px 40px rgba(10,22,40,0.12)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)'
+        e.currentTarget.style.boxShadow = 'none'
       }}
     >
       <div
@@ -226,52 +436,41 @@ function RoomCard({
             display: 'block',
           }}
         />
-      </div>
-      <div
-        style={{
-          padding: '20px 24px',
-          borderTop: '1px solid #000000',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: '16px',
-        }}
-      >
-        <div>
-          <p
-            style={{
-              fontSize: '11px',
-              letterSpacing: '0.2em',
-              color: '#666666',
-              textTransform: 'uppercase',
-              marginBottom: '6px',
-            }}
-          >
-            {room.id} · {room.client}
-          </p>
-          <p
-            style={{
-              fontSize: '18px',
-              fontWeight: 500,
-              color: '#000000',
-              letterSpacing: '-0.01em',
-              lineHeight: 1.3,
-            }}
-          >
-            {room.title}
-          </p>
-        </div>
-        <span
+        {/* Bottom gradient overlay */}
+        <div
           style={{
-            fontSize: '12px',
-            letterSpacing: '0.14em',
-            color: '#000000',
-            textTransform: 'uppercase',
-            whiteSpace: 'nowrap',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: '60px 24px 20px',
+            background: 'linear-gradient(transparent 0%, rgba(0,0,0,0.7) 100%)',
+            zIndex: 1,
           }}
         >
-          View →
-        </span>
+          <p
+            style={{
+              fontSize: 'clamp(20px, 2.5vw, 32px)',
+              fontWeight: 700,
+              color: '#ffffff',
+              fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+              letterSpacing: '-0.01em',
+              lineHeight: 1.15,
+              marginBottom: '4px',
+            }}
+          >
+            {service.title}
+          </p>
+          <p
+            style={{
+              fontSize: '13px',
+              color: 'rgba(255,255,255,0.7)',
+              fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+            }}
+          >
+            {service.descriptor}
+          </p>
+        </div>
       </div>
     </button>
   )

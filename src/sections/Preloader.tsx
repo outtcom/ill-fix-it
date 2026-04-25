@@ -20,7 +20,7 @@ export default function Preloader() {
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        backgroundColor: '#000000',
+        backgroundColor: '#0a1628',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -32,15 +32,16 @@ export default function Preloader() {
       <span
         style={{
           fontSize: 'clamp(32px, 8vw, 80px)',
-          fontWeight: 500,
-          letterSpacing: '-0.04em',
+          fontWeight: 700,
+          letterSpacing: '-0.02em',
           color: '#ffffff',
           transform: phase === 'loading' ? 'translateY(40px)' : 'translateY(0)',
           opacity: phase === 'loading' ? 0 : 1,
           transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease',
+          fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
         }}
       >
-        LUNAMARE
+        {"I'LL FIX IT"}
       </span>
     </div>
   )

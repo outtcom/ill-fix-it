@@ -6,8 +6,8 @@ interface HeaderProps {
   forceLight?: boolean
 }
 
-const navItems = ['Rooms', 'Experiences', 'Contact']
-const sectionIds = ['#works', '#capabilities', '#footer']
+const navItems = ['Services', 'About', 'Contact']
+const sectionIds = ['#works', '#capabilities', '#hero']
 
 function getOAuthUrl() {
   const kimiAuthUrl = import.meta.env.VITE_KIMI_AUTH_URL
@@ -28,6 +28,7 @@ function getOAuthUrl() {
 export default function Header({ scrollRef, forceLight = false }: HeaderProps) {
   const [isCompact, setIsCompact] = useState(false)
   const [overHeroRaw, setOverHeroRaw] = useState(true)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const rafRef = useRef<number>(0)
 
   useEffect(() => {
@@ -49,69 +50,261 @@ export default function Header({ scrollRef, forceLight = false }: HeaderProps) {
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' })
     }
+    setMobileOpen(false)
   }
 
-  const textColor = overHero ? '#ffffff' : '#000000'
+  const textColor = overHero ? '#ffffff' : '#0a1628'
+  const bgColor = overHero ? 'transparent' : 'rgba(245,245,240,0.97)'
+  const borderColor = overHero ? '1px solid rgba(255,255,255,0.18)' : '1px solid rgba(10,22,40,0.12)'
 
   return (
-    <header
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: isCompact ? '64px' : '88px',
-        backgroundColor: overHero ? 'transparent' : '#ffffff',
-        borderBottom: overHero
-          ? '1px solid rgba(255,255,255,0.18)'
-          : '1px solid #000000',
-        zIndex: 100,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 clamp(20px, 4vw, 60px)',
-        transition:
-          'height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease, border-color 0.4s ease',
-      }}
-    >
-      <div
+    <>
+      <header
         style={{
-          fontSize: '18px',
-          fontWeight: 500,
-          letterSpacing: '0.22em',
-          cursor: 'pointer',
-          color: textColor,
-          transition: 'color 0.4s ease',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: isCompact ? '60px' : '72px',
+          backgroundColor: bgColor,
+          backdropFilter: overHero ? 'none' : 'blur(12px)',
+          borderBottom: borderColor,
+          zIndex: 100,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 clamp(16px, 4vw, 60px)',
+          transition: 'height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease',
         }}
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       >
-        LUNAMARE
-      </div>
+        {/* Brand */}
+        <div
+          style={{
+            fontSize: 'clamp(18px, 3vw, 24px)',
+            fontWeight: 700,
+            letterSpacing: '-0.02em',
+            cursor: 'pointer',
+            color: textColor,
+            transition: 'color 0.4s ease',
+            fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+          }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          {"I'LL FIX IT"}
+        </div>
 
-      <nav style={{ display: 'flex', alignItems: 'stretch', height: '100%' }}>
-        {navItems.map((item, i) => (
-          <NavItem
-            key={item}
-            label={item}
-            overHero={overHero}
-            onClick={() => handleNavClick(i)}
-          />
-        ))}
-        {isAuthenticated && user ? (
-          <NavItem
-            label="Sign Out"
-            overHero={overHero}
-            onClick={logout}
-          />
-        ) : (
-          <NavItem
-            label="Sign In"
-            overHero={overHero}
-            onClick={() => { window.location.href = getOAuthUrl() }}
-          />
-        )}
-      </nav>
-    </header>
+        {/* Desktop Nav */}
+        <nav
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            height: '100%',
+            gap: '4px',
+          }}
+          className="header-desktop-nav"
+        >
+          {navItems.map((item, i) => (
+            <NavItem
+              key={item}
+              label={item}
+              overHero={overHero}
+              onClick={() => handleNavClick(i)}
+            />
+          ))}
+          {isAuthenticated && user ? (
+            <NavItem
+              label="Sign Out"
+              overHero={overHero}
+              onClick={logout}
+            />
+          ) : (
+            <NavItem
+              label="Sign In"
+              overHero={overHero}
+              onClick={() => { window.location.href = getOAuthUrl() }}
+            />
+          )}
+        </nav>
+
+        {/* Desktop Phone + CTA */}
+        <div
+          className="header-desktop-cta"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+          }}
+        >
+          <a
+            href="tel:4163886352"
+            style={{
+              fontSize: 'clamp(14px, 1.8vw, 18px)',
+              fontWeight: 700,
+              letterSpacing: '0.02em',
+              color: '#e8622c',
+              textDecoration: 'none',
+              fontFamily: '"SF Mono", Monaco, Inconsolata, monospace',
+              whiteSpace: 'nowrap',
+              transition: 'color 0.3s ease',
+            }}
+          >
+            (416) 388-6352
+          </a>
+          <button
+            onClick={() => document.querySelector('#hero')?.scrollIntoView({ behavior: 'smooth' })}
+            style={{
+              fontSize: '13px',
+              fontWeight: 600,
+              letterSpacing: '0.06em',
+              color: '#ffffff',
+              backgroundColor: '#e8622c',
+              border: 'none',
+              borderRadius: '24px',
+              padding: '8px 20px',
+              cursor: 'pointer',
+              textTransform: 'uppercase',
+              transition: 'background-color 0.25s ease, transform 0.2s ease',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#d45524'
+              e.currentTarget.style.transform = 'scale(1.03)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#e8622c'
+              e.currentTarget.style.transform = 'scale(1)'
+            }}
+          >
+            Get a Quote
+          </button>
+        </div>
+
+        {/* Mobile Hamburger */}
+        <button
+          className="header-mobile-toggle"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          style={{
+            display: 'none',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '8px',
+            zIndex: 101,
+          }}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={textColor} strokeWidth="2" strokeLinecap="round">
+            {mobileOpen ? (
+              <>
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </>
+            ) : (
+              <>
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </>
+            )}
+          </svg>
+        </button>
+      </header>
+
+      {/* Mobile Menu Overlay */}
+      {mobileOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(10,22,40,0.98)',
+            zIndex: 99,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '32px',
+          }}
+        >
+          <a
+            href="tel:4163886352"
+            style={{
+              fontSize: '24px',
+              fontWeight: 700,
+              color: '#e8622c',
+              textDecoration: 'none',
+              fontFamily: '"SF Mono", Monaco, Inconsolata, monospace',
+              marginBottom: '16px',
+            }}
+          >
+            (416) 388-6352
+          </a>
+          {navItems.map((item, i) => (
+            <button
+              key={item}
+              onClick={() => handleNavClick(i)}
+              style={{
+                fontSize: '24px',
+                fontWeight: 400,
+                letterSpacing: '0.1em',
+                color: '#ffffff',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textTransform: 'uppercase',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+              }}
+            >
+              {item}
+            </button>
+          ))}
+          {isAuthenticated && user ? (
+            <button
+              onClick={() => { logout(); setMobileOpen(false); }}
+              style={{
+                fontSize: '24px',
+                fontWeight: 400,
+                letterSpacing: '0.1em',
+                color: 'rgba(255,255,255,0.6)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textTransform: 'uppercase',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+              }}
+            >
+              Sign Out
+            </button>
+          ) : (
+            <button
+              onClick={() => { window.location.href = getOAuthUrl() }}
+              style={{
+                fontSize: '24px',
+                fontWeight: 400,
+                letterSpacing: '0.1em',
+                color: 'rgba(255,255,255,0.6)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textTransform: 'uppercase',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+              }}
+            >
+              Sign In
+            </button>
+          )}
+        </div>
+      )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .header-desktop-nav { display: none !important; }
+          .header-desktop-cta { display: none !important; }
+          .header-mobile-toggle { display: block !important; }
+        }
+        @media (min-width: 769px) {
+          .header-mobile-toggle { display: none !important; }
+        }
+      `}</style>
+    </>
   )
 }
 
@@ -126,9 +319,9 @@ function NavItem({
 }) {
   const [hovered, setHovered] = useState(false)
 
-  const baseColor = overHero ? '#ffffff' : '#000000'
-  const hoverBg = overHero ? '#ffffff' : '#000000'
-  const hoverFg = overHero ? '#000000' : '#ffffff'
+  const baseColor = overHero ? '#ffffff' : '#0a1628'
+  const hoverBg = overHero ? '#ffffff' : '#0a1628'
+  const hoverFg = overHero ? '#0a1628' : '#ffffff'
 
   return (
     <button
@@ -139,7 +332,7 @@ function NavItem({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '0 24px',
+        padding: '0 20px',
         fontSize: '13px',
         fontWeight: 400,
         letterSpacing: '0.08em',
@@ -149,7 +342,7 @@ function NavItem({
         cursor: 'pointer',
         transition: 'background-color 0.25s ease, color 0.25s ease',
         whiteSpace: 'nowrap',
-        fontFamily: '"Helvetica Neue", sans-serif',
+        fontFamily: 'ui-sans-serif, system-ui, sans-serif',
         textTransform: 'uppercase',
       }}
     >

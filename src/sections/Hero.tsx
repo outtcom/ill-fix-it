@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { trpc } from '@/providers/trpc'
 import { useAuth } from '@/hooks/useAuth'
+import { Toaster, toast } from 'sonner'
 
 const vertexShader = `
 varying vec2 vUv;
@@ -47,6 +48,16 @@ void main() {
 }
 `
 
+const SERVICE_OPTIONS = [
+  'General Repair',
+  'Plumbing',
+  'Drywall',
+  'Door Installation',
+  'Masonry & Concrete',
+  'Grout & Caulking',
+  'Other',
+]
+
 export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvasHostRef = useRef<HTMLDivElement>(null)
@@ -55,18 +66,18 @@ export default function Hero() {
     resolution: new THREE.Uniform(new THREE.Vector2(1, 1)),
     time: new THREE.Uniform(0),
   })
+  const rightPanelRef = useRef<HTMLDivElement>(null)
 
   const [submitHovered, setSubmitHovered] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [formData, setFormData] = useState({
-    checkin: '',
-    checkout: '',
-    guests: '2',
-    roomType: 'Any room',
-    name: '',
+    fullName: '',
+    phone: '',
     email: '',
-    message: '',
+    serviceType: '',
+    projectDescription: '',
   })
 
   const { user } = useAuth()
@@ -76,26 +87,37 @@ export default function Hero() {
     if (user) {
       setFormData((prev) => ({
         ...prev,
-        name: user.name || prev.name,
+        fullName: user.name || prev.fullName,
         email: user.email || prev.email,
       }))
     }
   }, [user])
 
-  const createReservation = trpc.reservation.create.useMutation({
+  const createQuote = trpc.quote.create.useMutation({
     onSuccess: () => {
       setSubmitted(true)
       setSubmitError(null)
+      toast.success("Quote request sent! Kevin will contact you within 24 hours.")
     },
     onError: (err) => {
       setSubmitError(err.message || 'Something went wrong. Please try again.')
+      toast.error(err.message || 'Something went wrong. Please try again.')
     },
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    // Clear error for this field
+    if (errors[e.target.name]) {
+      setErrors((prev) => {
+        const next = { ...prev }
+        delete next[e.target.name]
+        return next
+      })
+    }
   }
 
+  // Three.js shader setup
   useEffect(() => {
     const canvas = canvasRef.current
     const host = canvasHostRef.current
@@ -152,25 +174,66 @@ export default function Hero() {
     }
   }, [])
 
+  // Entrance animation for right panel
+  useEffect(() => {
+    const panel = rightPanelRef.current
+    if (!panel) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            panel.style.opacity = '1'
+            panel.style.transform = 'translateX(0)'
+          }
+        })
+      },
+      { threshold: 0.3 }
+    )
+    observer.observe(panel)
+    return () => observer.disconnect()
+  }, [])
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {}
+    if (!formData.fullName.trim()) newErrors.fullName = 'Name is required'
+    if (!formData.phone.trim()) newErrors.phone = 'Phone is required'
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Invalid email format'
+    }
+    if (!formData.serviceType) newErrors.serviceType = 'Service type is required'
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitError(null)
 
-    if (!formData.checkin || !formData.checkout || !formData.name || !formData.email) {
-      setSubmitError('Please fill in all required fields.')
-      return
-    }
+    if (!validate()) return
 
-    createReservation.mutate({
-      checkInDate: formData.checkin,
-      checkOutDate: formData.checkout,
-      guests: formData.guests,
-      roomType: formData.roomType,
-      fullName: formData.name,
+    createQuote.mutate({
+      fullName: formData.fullName,
       email: formData.email,
-      message: formData.message || undefined,
-      userId: user?.id,
+      phone: formData.phone,
+      serviceType: formData.serviceType,
+      projectDescription: formData.projectDescription || undefined,
     })
+  }
+
+  const handleReset = () => {
+    setSubmitted(false)
+    setFormData({
+      fullName: user?.name || '',
+      phone: '',
+      email: user?.email || '',
+      serviceType: '',
+      projectDescription: '',
+    })
+    setErrors({})
+    setSubmitError(null)
   }
 
   return (
@@ -180,11 +243,13 @@ export default function Hero() {
         position: 'relative',
         width: '100%',
         minHeight: '700px',
-        backgroundColor: '#0b0b0b',
+        backgroundColor: '#0a1628',
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 480px), 1fr))',
       }}
     >
+      <Toaster position="top-right" richColors />
+
       {/* Left: shader */}
       <div
         ref={canvasHostRef}
@@ -208,51 +273,47 @@ export default function Hero() {
         <div
           style={{
             position: 'absolute',
-            bottom: 'clamp(24px, 4vw, 48px)',
-            left: 'clamp(24px, 4vw, 48px)',
-            right: 'clamp(24px, 4vw, 48px)',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             zIndex: 2,
             pointerEvents: 'none',
+            padding: 'clamp(24px, 4vw, 48px)',
           }}
         >
           <h2
             style={{
-              fontSize: 'clamp(36px, 4.5vw, 64px)',
-              fontWeight: 400,
-              letterSpacing: '-0.03em',
-              lineHeight: 1.02,
+              fontSize: 'clamp(36px, 5vw, 72px)',
+              fontWeight: 700,
+              letterSpacing: '-0.02em',
+              lineHeight: 1.05,
               color: '#ffffff',
-              marginBottom: '16px',
-              textShadow: '0 2px 24px rgba(0,0,0,0.25)',
-              maxWidth: '520px',
+              textShadow: '0 2px 20px rgba(0,0,0,0.5)',
+              textAlign: 'center',
+              fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
             }}
           >
-            Plan your
+            Get Your
             <br />
-            coastal stay
+            Free Quote
           </h2>
-          <p
-            style={{
-              fontSize: '13px',
-              letterSpacing: '0.18em',
-              color: 'rgba(255,255,255,0.9)',
-              textTransform: 'uppercase',
-            }}
-          >
-            LUNAMARE · Reservations & Inquiries
-          </p>
         </div>
       </div>
 
       {/* Right: form */}
       <div
+        ref={rightPanelRef}
         style={{
-          backgroundColor: '#0b0b0b',
+          backgroundColor: '#0a1628',
           color: '#ffffff',
           padding: 'clamp(40px, 5vw, 72px) clamp(24px, 4vw, 60px)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
+          opacity: 0,
+          transform: 'translateX(40px)',
+          transition: 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         <div style={{ maxWidth: '520px', width: '100%', marginLeft: 'auto', marginRight: 'auto' }}>
@@ -263,6 +324,7 @@ export default function Hero() {
               color: 'rgba(255,255,255,0.6)',
               textTransform: 'uppercase',
               marginBottom: '14px',
+              fontFamily: 'ui-sans-serif, system-ui, sans-serif',
             }}
           >
             Get in touch
@@ -270,27 +332,85 @@ export default function Hero() {
           <h3
             style={{
               fontSize: 'clamp(28px, 3.2vw, 40px)',
-              fontWeight: 400,
+              fontWeight: 700,
               letterSpacing: '-0.02em',
               lineHeight: 1.15,
-              marginBottom: '36px',
+              marginBottom: '8px',
+              fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
             }}
           >
-            Reserve a room or send us a note.
+            Request a Quote
           </h3>
+          <p
+            style={{
+              fontSize: '15px',
+              lineHeight: 1.6,
+              color: 'rgba(255,255,255,0.6)',
+              marginBottom: '36px',
+              fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+            }}
+          >
+            Tell me about your project and I&apos;ll get back to you within 24 hours.
+          </p>
 
           {submitted ? (
             <div
               style={{
-                border: '1px solid rgba(255,255,255,0.4)',
+                border: '1px solid rgba(232,98,44,0.5)',
                 padding: '32px 28px',
-                fontSize: '15px',
-                lineHeight: 1.6,
-                color: 'rgba(255,255,255,0.85)',
+                borderRadius: '4px',
+                textAlign: 'center',
               }}
             >
-              Thank you — our reservations team will be in touch within 24
-              hours. A confirmation has been sent to your email.
+              <div
+                style={{
+                  fontSize: '28px',
+                  fontWeight: 700,
+                  color: '#e8622c',
+                  marginBottom: '12px',
+                  fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+                }}
+              >
+                &#10003; Quote Request Received
+              </div>
+              <p
+                style={{
+                  fontSize: '15px',
+                  lineHeight: 1.6,
+                  color: 'rgba(255,255,255,0.85)',
+                  marginBottom: '20px',
+                  fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                }}
+              >
+                Thanks! I&apos;ll call you within 24 hours to discuss your project.
+              </p>
+              <button
+                onClick={handleReset}
+                style={{
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  letterSpacing: '0.06em',
+                  color: '#ffffff',
+                  backgroundColor: 'transparent',
+                  border: '1px solid rgba(255,255,255,0.4)',
+                  borderRadius: '4px',
+                  padding: '12px 24px',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                  transition: 'all 0.25s ease',
+                  fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#ffffff'
+                  e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)'
+                  e.currentTarget.style.backgroundColor = 'transparent'
+                }}
+              >
+                Submit Another
+              </button>
             </div>
           ) : (
             <form
@@ -309,65 +429,84 @@ export default function Hero() {
                     fontSize: '13px',
                     lineHeight: 1.5,
                     color: 'rgba(255,150,150,0.9)',
-                    marginBottom: '4px',
+                    borderRadius: '4px',
                   }}
                 >
                   {submitError}
                 </div>
               )}
+
+              <Field
+                label="Full Name *"
+                type="text"
+                name="fullName"
+                placeholder="Your name"
+                value={formData.fullName}
+                onChange={handleChange}
+                error={errors.fullName}
+              />
+
               <Row>
-                <Field label="Check-in" type="date" name="checkin" value={formData.checkin} onChange={handleChange} />
-                <Field label="Check-out" type="date" name="checkout" value={formData.checkout} onChange={handleChange} />
-              </Row>
-              <Row>
-                <Field label="Guests" type="number" name="guests" placeholder="2" min={1} value={formData.guests} onChange={handleChange} />
-                <SelectField
-                  label="Room type"
-                  name="roomType"
-                  value={formData.roomType}
+                <Field
+                  label="Phone Number *"
+                  type="tel"
+                  name="phone"
+                  placeholder="(416) 555-0123"
+                  value={formData.phone}
                   onChange={handleChange}
-                  options={[
-                    'Any room',
-                    'Ocean Suite',
-                    'Private Villa',
-                    'Horizon Loft',
-                    'Beachfront Studio',
-                    'Cliffside Suite',
-                    'Seaview Villa',
-                  ]}
+                  error={errors.phone}
+                />
+                <Field
+                  label="Email *"
+                  type="email"
+                  name="email"
+                  placeholder="your@email.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  error={errors.email}
                 />
               </Row>
-              <Field label="Full name" type="text" name="name" placeholder="Jane Doe" value={formData.name} onChange={handleChange} />
-              <Field label="Email" type="email" name="email" placeholder="you@domain.com" value={formData.email} onChange={handleChange} />
+
+              <SelectField
+                label="Service Type *"
+                name="serviceType"
+                value={formData.serviceType}
+                onChange={handleChange}
+                options={SERVICE_OPTIONS}
+                error={errors.serviceType}
+              />
+
               <TextareaField
-                label="Message (optional)"
-                name="message"
-                placeholder="Occasion, dietary preferences, arrival needs…"
-                value={formData.message}
+                label="Project Description"
+                name="projectDescription"
+                placeholder="Describe what needs fixing..."
+                value={formData.projectDescription}
                 onChange={handleChange}
               />
+
               <button
                 type="submit"
-                disabled={createReservation.isPending}
+                disabled={createQuote.isPending}
                 onMouseEnter={() => setSubmitHovered(true)}
                 onMouseLeave={() => setSubmitHovered(false)}
                 style={{
                   marginTop: '12px',
                   padding: '18px 24px',
                   fontSize: '13px',
-                  fontWeight: 500,
+                  fontWeight: 600,
                   letterSpacing: '0.16em',
-                  color: submitHovered ? '#0b0b0b' : '#ffffff',
-                  backgroundColor: submitHovered ? '#ffffff' : 'transparent',
-                  border: '1px solid #ffffff',
-                  cursor: createReservation.isPending ? 'wait' : 'pointer',
+                  color: '#ffffff',
+                  backgroundColor: submitHovered ? '#d45524' : '#e8622c',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: createQuote.isPending ? 'wait' : 'pointer',
                   textTransform: 'uppercase',
                   transition: 'all 0.25s ease',
-                  fontFamily: '"Helvetica Neue", sans-serif',
-                  opacity: createReservation.isPending ? 0.6 : 1,
+                  fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                  opacity: createQuote.isPending ? 0.7 : 1,
                 }}
               >
-                {createReservation.isPending ? 'Submitting...' : 'Submit Inquiry'}
+                {createQuote.isPending ? 'Submitting...' : 'Submit Quote Request'}
               </button>
             </form>
           )}
@@ -393,17 +532,18 @@ function Row({ children }: { children: React.ReactNode }) {
 
 const fieldBase: React.CSSProperties = {
   width: '100%',
-  padding: '12px 0',
+  padding: '14px 16px',
   fontSize: '15px',
-  backgroundColor: 'transparent',
+  backgroundColor: 'rgba(255,255,255,0.05)',
   color: '#ffffff',
-  border: 'none',
-  borderBottom: '1px solid rgba(255,255,255,0.35)',
+  border: '1px solid rgba(255,255,255,0.12)',
+  borderRadius: '4px',
   outline: 'none',
-  fontFamily: 'inherit',
+  fontFamily: 'ui-sans-serif, system-ui, sans-serif',
   letterSpacing: '0.01em',
   appearance: 'none',
   colorScheme: 'dark',
+  transition: 'border-color 0.2s ease',
 }
 
 const labelBase: React.CSSProperties = {
@@ -411,8 +551,9 @@ const labelBase: React.CSSProperties = {
   letterSpacing: '0.2em',
   color: 'rgba(255,255,255,0.6)',
   textTransform: 'uppercase',
-  marginBottom: '4px',
+  marginBottom: '8px',
   display: 'block',
+  fontFamily: 'ui-sans-serif, system-ui, sans-serif',
 }
 
 function Field({
@@ -420,17 +561,17 @@ function Field({
   type,
   name,
   placeholder,
-  min,
   value,
   onChange,
+  error,
 }: {
   label: string
   type: string
   name: string
   placeholder?: string
-  min?: number
   value?: string
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  error?: string
 }) {
   return (
     <label style={{ display: 'block' }}>
@@ -439,13 +580,20 @@ function Field({
         type={type}
         name={name}
         placeholder={placeholder}
-        min={min}
         value={value}
         onChange={onChange}
-        style={fieldBase}
-        onFocus={(e) => (e.currentTarget.style.borderBottomColor = '#ffffff')}
-        onBlur={(e) => (e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.35)')}
+        style={{
+          ...fieldBase,
+          borderColor: error ? '#e8622c' : 'rgba(255,255,255,0.12)',
+        }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#e8622c' }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = error ? '#e8622c' : 'rgba(255,255,255,0.12)' }}
       />
+      {error && (
+        <span style={{ fontSize: '12px', color: '#e8622c', marginTop: '4px', display: 'block', fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
+          {error}
+        </span>
+      )}
     </label>
   )
 }
@@ -456,12 +604,14 @@ function SelectField({
   options,
   value,
   onChange,
+  error,
 }: {
   label: string
   name: string
   options: string[]
   value?: string
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  error?: string
 }) {
   return (
     <label style={{ display: 'block' }}>
@@ -470,16 +620,31 @@ function SelectField({
         name={name}
         value={value}
         onChange={onChange}
-        style={{ ...fieldBase, paddingRight: '20px' }}
-        onFocus={(e) => (e.currentTarget.style.borderBottomColor = '#ffffff')}
-        onBlur={(e) => (e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.35)')}
+        style={{
+          ...fieldBase,
+          paddingRight: '36px',
+          borderColor: error ? '#e8622c' : 'rgba(255,255,255,0.12)',
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='1.5'%3E%3Cpath d='M3 5l3 3 3-3'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right 12px center',
+        }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#e8622c' }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = error ? '#e8622c' : 'rgba(255,255,255,0.12)' }}
       >
+        <option value="" style={{ color: '#000', backgroundColor: '#fff' }}>
+          Select a service
+        </option>
         {options.map((opt) => (
           <option key={opt} value={opt} style={{ color: '#000', backgroundColor: '#fff' }}>
             {opt}
           </option>
         ))}
       </select>
+      {error && (
+        <span style={{ fontSize: '12px', color: '#e8622c', marginTop: '4px', display: 'block', fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
+          {error}
+        </span>
+      )}
     </label>
   )
 }
@@ -503,12 +668,12 @@ function TextareaField({
       <textarea
         name={name}
         placeholder={placeholder}
-        rows={3}
+        rows={4}
         value={value}
         onChange={onChange}
-        style={{ ...fieldBase, resize: 'vertical', paddingTop: '12px' }}
-        onFocus={(e) => (e.currentTarget.style.borderBottomColor = '#ffffff')}
-        onBlur={(e) => (e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.35)')}
+        style={{ ...fieldBase, resize: 'vertical', paddingTop: '14px' }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#e8622c' }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)' }}
       />
     </label>
   )

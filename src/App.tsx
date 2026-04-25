@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Routes, Route } from 'react-router'
 import Header from './sections/Header'
 import Hero from './sections/Hero'
@@ -8,12 +8,11 @@ import Capabilities from './sections/Capabilities'
 import Spatial from './sections/Spatial'
 import Footer from './sections/Footer'
 import Preloader from './sections/Preloader'
-import RoomDetail from './pages/RoomDetail'
 import Login from './pages/Login'
+import FloatingPhone from './components/FloatingPhone'
 
 function App() {
   const scrollRef = useRef({ y: 0, speed: 0 })
-  const [currentRoomId, setCurrentRoomId] = useState<string | null>(null)
 
   useEffect(() => {
     let rafId: number
@@ -32,33 +31,22 @@ function App() {
     return () => cancelAnimationFrame(rafId)
   }, [])
 
-  const handleSelectRoom = (id: string) => setCurrentRoomId(id)
-  const handleBack = () => {
-    setCurrentRoomId(null)
-    setTimeout(() => {
-      document.querySelector('#works')?.scrollIntoView({ behavior: 'auto' })
-    }, 0)
-  }
-
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="*" element={
         <>
           <Preloader />
-          <Header scrollRef={scrollRef} forceLight={currentRoomId !== null} />
-          {currentRoomId ? (
-            <RoomDetail roomId={currentRoomId} onBack={handleBack} />
-          ) : (
-            <main>
-              <Spatial />
-              <Philosophy />
-              <Works scrollRef={scrollRef} onSelectRoom={handleSelectRoom} />
-              <Capabilities />
-              <Hero />
-            </main>
-          )}
+          <Header scrollRef={scrollRef} />
+          <main>
+            <Spatial />
+            <Philosophy />
+            <Works scrollRef={scrollRef} />
+            <Capabilities />
+            <Hero />
+          </main>
           <Footer />
+          <FloatingPhone />
         </>
       } />
     </Routes>

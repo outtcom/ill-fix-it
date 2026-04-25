@@ -1,25 +1,52 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-const services: { label: string; detail: string }[] = [
-  { label: 'Ocean Suites', detail: 'King beds, 55m², retractable sea-facing glass facade' },
-  { label: 'Private Villas', detail: 'Plunge pool, resident butler, 24-hour in-villa service' },
-  { label: 'Spa & Wellness', detail: 'Seawater thermal circuit and coastal massage rituals' },
-  { label: 'Coastal Dining', detail: 'Two restaurants, day-boat catch, local vineyards' },
-  { label: 'Pool & Terrace', detail: '22m infinity pool, cabanas, sunset cocktail bar' },
-  { label: 'Weddings & Events', detail: 'Cliffside venue for up to 120 guests' },
-  { label: 'Concierge', detail: 'Yacht charters, hiking guides, and private excursions' },
-  { label: 'Airport Transfer', detail: 'Chauffeured arrival from Naples and Amalfi airports' },
+gsap.registerPlugin(ScrollTrigger)
+
+const advantages: { label: string; detail: string }[] = [
+  { label: 'Same-Day Response', detail: 'Emergency repairs handled within hours, not days' },
+  { label: 'Upfront Pricing', detail: 'No hidden fees \u2014 quote before any work begins' },
+  { label: 'Fully Equipped', detail: 'Professional tools and materials for every job' },
+  { label: 'Clean Worksite', detail: 'Your home is treated with respect and left spotless' },
+  { label: 'Guaranteed Work', detail: 'All repairs backed by a satisfaction guarantee' },
+  { label: 'Licensed & Insured', detail: 'Full liability coverage for your peace of mind' },
+  { label: 'Local Expert', detail: 'Deep knowledge of Toronto homes and building codes' },
+  { label: 'Flexible Scheduling', detail: 'Evenings and weekends available to fit your life' },
 ]
 
 export default function Capabilities() {
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const itemsRef = useRef<HTMLUListElement>(null)
 
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
     video.play().catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    const section = sectionRef.current
+    const items = itemsRef.current
+    if (!section || !items) return
+
+    const ctx = gsap.context(() => {
+      gsap.from(items.children, {
+        y: 20,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 75%',
+          once: true,
+        },
+      })
+    }, section)
+
+    return () => ctx.revert()
   }, [])
 
   return (
@@ -29,13 +56,13 @@ export default function Capabilities() {
       style={{
         position: 'relative',
         overflow: 'hidden',
-        backgroundColor: '#0b0b0b',
-        padding: 'clamp(100px, 12vw, 160px) clamp(20px, 4vw, 60px)',
+        backgroundColor: '#0a1628',
+        padding: 'clamp(100px, 12vw, 160px) clamp(20px, 5vw, 80px)',
       }}
     >
       <video
         ref={videoRef}
-        src="/videos/spatial.mp4"
+        src="/videos/services-video.mp4"
         muted
         loop
         playsInline
@@ -53,7 +80,7 @@ export default function Capabilities() {
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          backgroundColor: 'rgba(10, 22, 40, 0.6)',
           zIndex: 1,
         }}
       />
@@ -76,7 +103,7 @@ export default function Capabilities() {
             flexWrap: 'wrap',
             marginBottom: '60px',
             paddingBottom: '28px',
-            borderBottom: '1px solid rgba(255,255,255,0.35)',
+            borderBottom: '1px solid rgba(255,255,255,0.2)',
           }}
         >
           <div style={{ flex: '1 1 500px' }}>
@@ -84,42 +111,45 @@ export default function Capabilities() {
               style={{
                 fontSize: '11px',
                 letterSpacing: '0.24em',
-                color: 'rgba(255,255,255,0.7)',
+                color: '#2cc9e8',
                 textTransform: 'uppercase',
                 marginBottom: '18px',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
               }}
             >
-              What we offer
+              WHY HOMEOWNERS TRUST ME
             </p>
             <h2
               style={{
                 fontSize: 'clamp(40px, 6vw, 80px)',
-                fontWeight: 400,
-                letterSpacing: '-0.03em',
-                lineHeight: 1,
+                fontWeight: 700,
+                letterSpacing: '-0.02em',
+                lineHeight: 1.1,
                 color: '#ffffff',
                 marginBottom: '24px',
+                fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
               }}
             >
-              Hotel Services
+              Built on Reliability
             </h2>
             <p
               style={{
                 fontSize: 'clamp(15px, 1.2vw, 18px)',
-                fontWeight: 300,
+                fontWeight: 400,
                 lineHeight: 1.6,
                 color: 'rgba(255,255,255,0.78)',
                 maxWidth: '640px',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
               }}
             >
-              From sunrise breakfast on your balcony to a private yacht at
-              dusk, every detail of a stay at LUNAMARE is quietly arranged.
-              A few of the services available to every guest:
+              With over a decade of hands-on experience across the GTA, I show up
+              on time, get the job done right, and leave your home cleaner than
+              I found it.
             </p>
           </div>
           <div
             style={{
-              flex: '0 0 clamp(180px, 22vw, 280px)',
+              flex: '0 0 clamp(120px, 18vw, 200px)',
               aspectRatio: '1',
               display: 'flex',
               alignItems: 'center',
@@ -132,6 +162,7 @@ export default function Capabilities() {
 
         {/* Bullet grid */}
         <ul
+          ref={itemsRef}
           style={{
             listStyle: 'none',
             padding: 0,
@@ -139,12 +170,12 @@ export default function Capabilities() {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
             gap: '2px',
-            backgroundColor: 'rgba(255,255,255,0.18)',
-            border: '1px solid rgba(255,255,255,0.18)',
+            backgroundColor: 'rgba(255,255,255,0.15)',
+            border: '1px solid rgba(255,255,255,0.15)',
           }}
         >
-          {services.map((service, i) => (
-            <BulletItem key={service.label} index={i} {...service} />
+          {advantages.map((adv, i) => (
+            <BulletItem key={adv.label} index={i} {...adv} />
           ))}
         </ul>
       </div>
@@ -164,10 +195,10 @@ function BulletItem({
   return (
     <li
       style={{
-        backgroundColor: 'rgba(11,11,11,0.55)',
+        backgroundColor: 'rgba(10,22,40,0.65)',
         padding: '28px 32px',
         display: 'flex',
-        gap: '20px',
+        gap: '16px',
         alignItems: 'flex-start',
         minHeight: '140px',
       }}
@@ -175,40 +206,54 @@ function BulletItem({
       <span
         style={{
           flex: '0 0 auto',
-          width: '28px',
-          fontSize: '11px',
-          letterSpacing: '0.14em',
-          color: 'rgba(255,255,255,0.55)',
-          fontVariantNumeric: 'tabular-nums',
-          paddingTop: '7px',
+          width: '20px',
+          height: '20px',
+          borderRadius: '50%',
+          backgroundColor: '#e8622c',
+          marginTop: '4px',
+          flexShrink: 0,
         }}
-      >
-        {String(index + 1).padStart(2, '0')}
-      </span>
+      />
       <div style={{ flex: '1 1 0%' }}>
-        <h3
+        <span
           style={{
-            fontSize: 'clamp(18px, 1.6vw, 24px)',
-            fontWeight: 500,
-            letterSpacing: '-0.01em',
-            lineHeight: 1.2,
+            fontSize: 'clamp(12px, 1.4vw, 14px)',
+            fontWeight: 600,
+            letterSpacing: '0.04em',
+            lineHeight: 1.3,
             color: '#ffffff',
-            marginBottom: '10px',
+            textTransform: 'uppercase',
+            display: 'block',
+            marginBottom: '8px',
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
           }}
         >
           {label}
-        </h3>
+        </span>
         <p
           style={{
             fontSize: '14px',
             lineHeight: 1.55,
             color: 'rgba(255,255,255,0.72)',
             margin: 0,
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
           }}
         >
           {detail}
         </p>
       </div>
+      <span
+        style={{
+          flex: '0 0 auto',
+          fontSize: '11px',
+          letterSpacing: '0.14em',
+          color: 'rgba(255,255,255,0.35)',
+          fontVariantNumeric: 'tabular-nums',
+          paddingTop: '4px',
+        }}
+      >
+        {String(index + 1).padStart(2, '0')}
+      </span>
     </li>
   )
 }
@@ -221,7 +266,7 @@ function OrbitalBadge() {
     if (!svg) return
 
     const pathId = `orbital-path-${Math.floor(Math.random() * 10000)}`
-    const duration = 25
+    const duration = 60
 
     const path = svg.querySelector('path')
     if (!path) return
@@ -229,12 +274,12 @@ function OrbitalBadge() {
     path.setAttribute('id', pathId)
     path.setAttribute('fill', 'none')
 
-    const textContent = 'LUNAMARE \u2022 COASTAL RETREAT \u2022 EST. 1998 \u2022 '
+    const textContent = '\u2022 PROMPT \u2022 RELIABLE \u2022 24/7 SERVICE \u2022 '
 
     const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-    textEl.setAttribute('fill', '#ffffff')
-    textEl.setAttribute('font-family', "'Helvetica Neue', sans-serif")
-    textEl.setAttribute('font-size', '18px')
+    textEl.setAttribute('fill', '#2cc9e8')
+    textEl.setAttribute('font-family', 'ui-sans-serif, system-ui, sans-serif')
+    textEl.setAttribute('font-size', '16px')
     textEl.setAttribute('font-weight', '500')
     textEl.setAttribute('letter-spacing', '2px')
 
@@ -289,9 +334,9 @@ function OrbitalBadge() {
         <path
           d="M200,40 A160,160 0 1,1 199.99,40"
           fill="none"
-          stroke="#ffffff"
+          stroke="#2cc9e8"
           strokeWidth="0.5"
-          opacity="0.25"
+          opacity="0.3"
         />
       </svg>
     </div>
