@@ -86,11 +86,11 @@ export default function Header({ scrollRef, forceLight = false }: HeaderProps) {
             cursor: 'pointer',
             color: textColor,
             transition: 'color 0.4s ease',
-            fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+            fontFamily: '"Oswald", sans-serif',
           }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          {"I'LL FIX IT"}
+          {"I'LL FIX IT HOME REPAIRS"}
         </div>
 
         {/* Desktop Nav */}
@@ -141,7 +141,7 @@ export default function Header({ scrollRef, forceLight = false }: HeaderProps) {
               fontSize: 'clamp(14px, 1.8vw, 18px)',
               fontWeight: 700,
               letterSpacing: '0.02em',
-              color: '#e8622c',
+              color: '#96D1F1',
               textDecoration: 'none',
               fontFamily: '"SF Mono", Monaco, Inconsolata, monospace',
               whiteSpace: 'nowrap',
@@ -157,7 +157,7 @@ export default function Header({ scrollRef, forceLight = false }: HeaderProps) {
               fontWeight: 600,
               letterSpacing: '0.06em',
               color: '#ffffff',
-              backgroundColor: '#e8622c',
+              backgroundColor: '#96D1F1',
               border: 'none',
               borderRadius: '24px',
               padding: '8px 20px',
@@ -167,11 +167,11 @@ export default function Header({ scrollRef, forceLight = false }: HeaderProps) {
               whiteSpace: 'nowrap',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#d45524'
+              e.currentTarget.style.backgroundColor = '#7AB8D9'
               e.currentTarget.style.transform = 'scale(1.03)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#e8622c'
+              e.currentTarget.style.backgroundColor = '#96D1F1'
               e.currentTarget.style.transform = 'scale(1)'
             }}
           >
@@ -229,7 +229,7 @@ export default function Header({ scrollRef, forceLight = false }: HeaderProps) {
             style={{
               fontSize: '24px',
               fontWeight: 700,
-              color: '#e8622c',
+              color: '#96D1F1',
               textDecoration: 'none',
               fontFamily: '"SF Mono", Monaco, Inconsolata, monospace',
               marginBottom: '16px',

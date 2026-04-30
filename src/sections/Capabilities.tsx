@@ -127,7 +127,7 @@ export default function Capabilities() {
                 lineHeight: 1.1,
                 color: '#ffffff',
                 marginBottom: '24px',
-                fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+                fontFamily: '"Oswald", sans-serif',
               }}
             >
               Built on Reliability
@@ -209,7 +209,7 @@ function BulletItem({
           width: '20px',
           height: '20px',
           borderRadius: '50%',
-          backgroundColor: '#e8622c',
+          backgroundColor: '#96D1F1',
           marginTop: '4px',
           flexShrink: 0,
         }}

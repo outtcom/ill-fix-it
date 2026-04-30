@@ -291,7 +291,7 @@ export default function Hero() {
               color: '#ffffff',
               textShadow: '0 2px 20px rgba(0,0,0,0.5)',
               textAlign: 'center',
-              fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+              fontFamily: '"Oswald", sans-serif',
             }}
           >
             Get Your
@@ -336,7 +336,7 @@ export default function Hero() {
               letterSpacing: '-0.02em',
               lineHeight: 1.15,
               marginBottom: '8px',
-              fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+              fontFamily: '"Oswald", sans-serif',
             }}
           >
             Request a Quote
@@ -366,9 +366,9 @@ export default function Hero() {
                 style={{
                   fontSize: '28px',
                   fontWeight: 700,
-                  color: '#e8622c',
+                  color: '#96D1F1',
                   marginBottom: '12px',
-                  fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+                  fontFamily: '"Oswald", sans-serif',
                 }}
               >
                 &#10003; Quote Request Received
@@ -496,7 +496,7 @@ export default function Hero() {
                   fontWeight: 600,
                   letterSpacing: '0.16em',
                   color: '#ffffff',
-                  backgroundColor: submitHovered ? '#d45524' : '#e8622c',
+                  backgroundColor: submitHovered ? '#7AB8D9' : '#96D1F1',
                   border: 'none',
                   borderRadius: '4px',
                   cursor: createQuote.isPending ? 'wait' : 'pointer',
@@ -585,13 +585,13 @@ function Field({
         onChange={onChange}
         style={{
           ...fieldBase,
-          borderColor: error ? '#e8622c' : 'rgba(255,255,255,0.12)',
+          borderColor: error ? '#96D1F1' : 'rgba(255,255,255,0.12)',
         }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = '#e8622c' }}
-        onBlur={(e) => { e.currentTarget.style.borderColor = error ? '#e8622c' : 'rgba(255,255,255,0.12)' }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#96D1F1' }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = error ? '#96D1F1' : 'rgba(255,255,255,0.12)' }}
       />
       {error && (
-        <span style={{ fontSize: '12px', color: '#e8622c', marginTop: '4px', display: 'block', fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
+        <span style={{ fontSize: '12px', color: '#96D1F1', marginTop: '4px', display: 'block', fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
           {error}
         </span>
       )}
@@ -624,13 +624,13 @@ function SelectField({
         style={{
           ...fieldBase,
           paddingRight: '36px',
-          borderColor: error ? '#e8622c' : 'rgba(255,255,255,0.12)',
+          borderColor: error ? '#96D1F1' : 'rgba(255,255,255,0.12)',
           backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='1.5'%3E%3Cpath d='M3 5l3 3 3-3'/%3E%3C/svg%3E")`,
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'right 12px center',
         }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = '#e8622c' }}
-        onBlur={(e) => { e.currentTarget.style.borderColor = error ? '#e8622c' : 'rgba(255,255,255,0.12)' }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#96D1F1' }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = error ? '#96D1F1' : 'rgba(255,255,255,0.12)' }}
       >
         <option value="" style={{ color: '#000', backgroundColor: '#fff' }}>
           Select a service
@@ -642,7 +642,7 @@ function SelectField({
         ))}
       </select>
       {error && (
-        <span style={{ fontSize: '12px', color: '#e8622c', marginTop: '4px', display: 'block', fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
+        <span style={{ fontSize: '12px', color: '#96D1F1', marginTop: '4px', display: 'block', fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
           {error}
         </span>
       )}
@@ -673,7 +673,7 @@ function TextareaField({
         value={value}
         onChange={onChange}
         style={{ ...fieldBase, resize: 'vertical', paddingTop: '14px' }}
-        onFocus={(e) => { e.currentTarget.style.borderColor = '#e8622c' }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = '#96D1F1' }}
         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)' }}
       />
     </label>

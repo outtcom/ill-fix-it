@@ -139,7 +139,7 @@ export default function Spatial() {
             color: '#ffffff',
             maxWidth: '900px',
             textShadow: '0 2px 24px rgba(0,0,0,0.25)',
-            fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+            fontFamily: '"Oswald", sans-serif',
           }}
         >
           Home Repairs
@@ -182,7 +182,7 @@ export default function Spatial() {
               fontWeight: 600,
               letterSpacing: '0.06em',
               color: '#ffffff',
-              backgroundColor: primaryHovered ? '#d45524' : '#e8622c',
+              backgroundColor: primaryHovered ? '#7AB8D9' : '#96D1F1',
               border: 'none',
               borderRadius: '4px',
               padding: '16px 36px',

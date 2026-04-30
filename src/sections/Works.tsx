@@ -146,7 +146,7 @@ export default function Works({ scrollRef: _scrollRef }: WorksProps) {
                 letterSpacing: '-0.02em',
                 lineHeight: 1.1,
                 color: '#0a1628',
-                fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+                fontFamily: '"Oswald", sans-serif',
               }}
             >
               Services
@@ -239,7 +239,7 @@ export default function Works({ scrollRef: _scrollRef }: WorksProps) {
                   fontWeight: 700,
                   color: '#0a1628',
                   marginBottom: '4px',
-                  fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+                  fontFamily: '"Oswald", sans-serif',
                 }}
               >
                 {selectedService.title}
@@ -289,7 +289,7 @@ export default function Works({ scrollRef: _scrollRef }: WorksProps) {
                       fontFamily: 'ui-sans-serif, system-ui, sans-serif',
                     }}
                   >
-                    <span style={{ color: '#e8622c', fontSize: '16px' }}>&#8226;</span>
+                    <span style={{ color: '#96D1F1', fontSize: '16px' }}>&#8226;</span>
                     {feature}
                   </div>
                 ))}
@@ -307,7 +307,7 @@ export default function Works({ scrollRef: _scrollRef }: WorksProps) {
                     fontWeight: 600,
                     letterSpacing: '0.06em',
                     color: '#ffffff',
-                    backgroundColor: '#e8622c',
+                    backgroundColor: '#96D1F1',
                     border: 'none',
                     borderRadius: '4px',
                     padding: '14px 28px',
@@ -316,8 +316,8 @@ export default function Works({ scrollRef: _scrollRef }: WorksProps) {
                     fontFamily: 'ui-sans-serif, system-ui, sans-serif',
                     transition: 'background-color 0.25s ease',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#d45524' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#e8622c' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#7AB8D9' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#96D1F1' }}
                 >
                   Get a Quote
                 </button>
@@ -454,7 +454,7 @@ function ServiceCard({
               fontSize: 'clamp(20px, 2.5vw, 32px)',
               fontWeight: 700,
               color: '#ffffff',
-              fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+              fontFamily: '"Oswald", sans-serif',
               letterSpacing: '-0.01em',
               lineHeight: 1.15,
               marginBottom: '4px',

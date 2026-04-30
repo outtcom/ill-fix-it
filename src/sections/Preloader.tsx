@@ -38,10 +38,10 @@ export default function Preloader() {
           transform: phase === 'loading' ? 'translateY(40px)' : 'translateY(0)',
           opacity: phase === 'loading' ? 0 : 1,
           transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease',
-          fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+          fontFamily: '"Oswald", sans-serif',
         }}
       >
-        {"I'LL FIX IT"}
+        {"I'LL FIX IT HOME REPAIRS"}
       </span>
     </div>
   )

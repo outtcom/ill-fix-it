@@ -28,7 +28,7 @@ export default function Footer() {
                 fontSize: '12px',
                 fontWeight: 600,
                 letterSpacing: '0.18em',
-                color: '#e8622c',
+                color: '#96D1F1',
                 marginBottom: '20px',
                 textTransform: 'uppercase',
                 fontFamily: 'ui-sans-serif, system-ui, sans-serif',
@@ -49,7 +49,7 @@ export default function Footer() {
                 fontFamily: '"SF Mono", Monaco, Inconsolata, monospace',
                 transition: 'color 0.3s ease',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = '#e8622c' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#96D1F1' }}
               onMouseLeave={(e) => { e.currentTarget.style.color = '#ffffff' }}
             >
               (416) 388-6352
@@ -88,7 +88,7 @@ export default function Footer() {
                 fontSize: '12px',
                 fontWeight: 600,
                 letterSpacing: '0.18em',
-                color: '#e8622c',
+                color: '#96D1F1',
                 marginBottom: '20px',
                 textTransform: 'uppercase',
                 fontFamily: 'ui-sans-serif, system-ui, sans-serif',
@@ -118,7 +118,7 @@ export default function Footer() {
                 fontSize: '12px',
                 fontWeight: 600,
                 letterSpacing: '0.18em',
-                color: '#e8622c',
+                color: '#96D1F1',
                 marginBottom: '20px',
                 textTransform: 'uppercase',
                 fontFamily: 'ui-sans-serif, system-ui, sans-serif',
@@ -196,12 +196,12 @@ export default function Footer() {
               fontWeight: 700,
               letterSpacing: '-0.04em',
               color: 'rgba(255,255,255,0.08)',
-              fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+              fontFamily: '"Oswald", sans-serif',
               lineHeight: 1,
               userSelect: 'none',
             }}
           >
-            {"I'LL FIX IT"}
+            {"I'LL FIX IT HOME REPAIRS"}
           </span>
           <p
             style={{
@@ -210,7 +210,7 @@ export default function Footer() {
               fontFamily: 'ui-sans-serif, system-ui, sans-serif',
             }}
           >
-            &copy; 2025 I&apos;ll Fix It. All rights reserved.
+            &copy; 2025 I&apos;ll Fix It Home Repairs. All rights reserved.
           </p>
         </div>
       </div>

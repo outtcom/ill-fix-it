@@ -75,7 +75,7 @@ export default function Philosophy() {
             letterSpacing: '-0.02em',
             color: '#0a1628',
             maxWidth: '1000px',
-            fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+            fontFamily: '"Oswald", sans-serif',
           }}
         >
           From leaky faucets to full concrete pours, no job is too small or too big.

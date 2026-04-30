@@ -10,7 +10,7 @@ export default function FloatingPhone() {
         width: '56px',
         height: '56px',
         borderRadius: '50%',
-        backgroundColor: '#e8622c',
+        backgroundColor: '#96D1F1',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
