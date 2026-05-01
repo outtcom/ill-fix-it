@@ -1,8 +1,4 @@
-import { useAuth } from '@/hooks/useAuth'
-
 export default function Footer() {
-  const { isAuthenticated } = useAuth()
-
   return (
     <footer
       id="footer"
@@ -130,7 +126,6 @@ export default function Footer() {
               { label: 'Services', target: '#works' },
               { label: 'Get a Quote', target: '#hero' },
               { label: 'About', target: '#about' },
-              ...(isAuthenticated ? [] : [{ label: 'Login', target: '/login' }]),
             ].map((link) => (
               <p key={link.label} style={{ lineHeight: 2 }}>
                 {link.target.startsWith('#') ? (

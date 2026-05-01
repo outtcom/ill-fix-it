@@ -5,10 +5,10 @@ import Hero from './sections/Hero'
 import Philosophy from './sections/Philosophy'
 import Works from './sections/Works'
 import Capabilities from './sections/Capabilities'
+import Testimonials from './sections/Testimonials'
 import Spatial from './sections/Spatial'
 import Footer from './sections/Footer'
 import Preloader from './sections/Preloader'
-import Login from './pages/Login'
 import FloatingPhone from './components/FloatingPhone'
 
 function App() {
@@ -33,7 +33,6 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
       <Route path="*" element={
         <>
           <Preloader />
@@ -43,6 +42,7 @@ function App() {
             <Philosophy />
             <Works scrollRef={scrollRef} />
             <Capabilities />
+            <Testimonials />
             <Hero />
           </main>
           <Footer />

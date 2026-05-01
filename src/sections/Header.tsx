@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { useAuth } from '@/hooks/useAuth'
-
 interface HeaderProps {
   scrollRef: React.MutableRefObject<{ y: number; speed: number }>
   forceLight?: boolean
@@ -8,22 +6,6 @@ interface HeaderProps {
 
 const navItems = ['Services', 'About', 'Contact']
 const sectionIds = ['#works', '#capabilities', '#hero']
-
-function getOAuthUrl() {
-  const kimiAuthUrl = import.meta.env.VITE_KIMI_AUTH_URL
-  const appID = import.meta.env.VITE_APP_ID
-  const redirectUri = `${window.location.origin}/api/oauth/callback`
-  const state = btoa(redirectUri)
-
-  const url = new URL(`${kimiAuthUrl}/api/oauth/authorize`)
-  url.searchParams.set('client_id', appID)
-  url.searchParams.set('redirect_uri', redirectUri)
-  url.searchParams.set('response_type', 'code')
-  url.searchParams.set('scope', 'profile')
-  url.searchParams.set('state', state)
-
-  return url.toString()
-}
 
 export default function Header({ scrollRef, forceLight = false }: HeaderProps) {
   const [isCompact, setIsCompact] = useState(false)
@@ -43,7 +25,6 @@ export default function Header({ scrollRef, forceLight = false }: HeaderProps) {
   }, [scrollRef])
 
   const overHero = overHeroRaw && !forceLight
-  const { user, isAuthenticated, logout } = useAuth({ redirectPath: '/' })
 
   const handleNavClick = (index: number) => {
     const target = document.querySelector(sectionIds[index])
@@ -111,19 +92,6 @@ export default function Header({ scrollRef, forceLight = false }: HeaderProps) {
               onClick={() => handleNavClick(i)}
             />
           ))}
-          {isAuthenticated && user ? (
-            <NavItem
-              label="Sign Out"
-              overHero={overHero}
-              onClick={logout}
-            />
-          ) : (
-            <NavItem
-              label="Sign In"
-              overHero={overHero}
-              onClick={() => { window.location.href = getOAuthUrl() }}
-            />
-          )}
         </nav>
 
         {/* Desktop Phone + CTA */}
@@ -256,41 +224,6 @@ export default function Header({ scrollRef, forceLight = false }: HeaderProps) {
               {item}
             </button>
           ))}
-          {isAuthenticated && user ? (
-            <button
-              onClick={() => { logout(); setMobileOpen(false); }}
-              style={{
-                fontSize: '24px',
-                fontWeight: 400,
-                letterSpacing: '0.1em',
-                color: 'rgba(255,255,255,0.6)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                textTransform: 'uppercase',
-                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
-              }}
-            >
-              Sign Out
-            </button>
-          ) : (
-            <button
-              onClick={() => { window.location.href = getOAuthUrl() }}
-              style={{
-                fontSize: '24px',
-                fontWeight: 400,
-                letterSpacing: '0.1em',
-                color: 'rgba(255,255,255,0.6)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                textTransform: 'uppercase',
-                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
-              }}
-            >
-              Sign In
-            </button>
-          )}
         </div>
       )}
 
